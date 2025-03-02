@@ -1,0 +1,334 @@
+DOCKER
+
+DOCKER
+
+28. How to build a docker image from a Dockerfile?
+Answer:
+Use the docker build command.
+
+sh
+Copy code
+docker build -t my-image:latest .
+
+
+29. How to move all the HTML, CSS, and images to a docker image?
+Answer:
+Copy the files in the Dockerfile.
+
+Dockerfile
+Copy code
+FROM nginx:alpine
+COPY ./html /usr/share/nginx/html
+30. Write a small Dockerfile.
+Answer:
+
+Dockerfile
+Copy code
+FROM node:14-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+
+
+31. How to execute a command in a Dockerfile?
+Answer:
+Use the RUN instruction.
+
+Dockerfile
+Copy code
+RUN echo "Hello, World!"
+
+
+32. How to expose a port on the container?
+Answer:
+Use the EXPOSE instruction.
+
+Dockerfile
+Copy code
+EXPOSE 80
+
+Docker Questions
+
+1. How do you build a Docker image from a Dockerfile?
+
+Use the docker build command.
+sh
+Copy code
+docker build -t my-image:latest .
+
+
+2. How do you build a Docker image from a container?
+
+Use docker commit to create a new image from a container's changes.
+sh
+Copy code
+docker commit <container_id> my-new-image
+
+3. Difference between docker load and import?
+
+docker load loads an image from a tar archive into Docker.
+docker import imports the contents of a tarball to create a filesystem image.
+
+5. Use of Docker ENTRYPOINT
+ENTRYPOINT in Docker specifies a command that will always be executed when the container starts. It allows you to configure a container that will run as an executable.
+
+Docker
+
+13. Multi-stage Dockerfile Explanation
+
+Multi-stage Dockerfile helps in reducing the final image size by separating the build environment from the runtime environment.
+
+Dockerfile
+Copy code
+# Build stage
+FROM golang:1.16 as builder
+WORKDIR /app
+COPY . .
+RUN go build -o myapp
+
+# Runtime stage
+FROM alpine:latest
+WORKDIR /app
+COPY --from=builder /app/myapp .
+CMD ["./myapp"]
+
+
+14. Use of Multi-stage Dockerfile and Can We Use Two FROM Images
+Yes, multi-stage Dockerfile helps in creating leaner Docker images by separating the build and runtime stages. You can use multiple FROM statements to define different stages in a Dockerfile.
+
+
+15. What do you mean by hardening the Docker image?
+Hardening a Docker image involves securing the image by:
+
+Minimizing the image size.
+Using non-root users.
+Regularly updating the base image.
+Scanning for vulnerabilities.
+Removing unnecessary packages and files.
+Kubernetes
+
+Docker vs. Kubernetes
+
+
+6. What is the difference between Docker and Kubernetes?
+
+Difference between Docker and Kubernetes:
+
+Docker: A platform for developing, shipping, and running applications inside containers.
+Kubernetes: An orchestration platform for managing containerized applications at scale, including deployment, scaling, and operations.
+
+
+7. Can we deploy applications in Docker?
+
+Yes, you can deploy applications in Docker containers.
+
+8. Does Docker have the concept of POD?
+
+No, Docker does not have the concept of Pods. Pods are a Kubernetes concept that groups one or more containers that share the same network namespace and storage.
+
+Image Scenarios
+
+9. I have a scenario where I want to create another image (Image2) that uses all the resources of Image1 with additional resources.
+
+Image2 using all resources of Image1:
+
+Dockerfile
+Copy code
+FROM image1
+# Add additional resources for Image2
+COPY new-resources /app
+
+
+10. I want to create another image (Image2) that uses partially resources of Image1.
+
+Image2 using part of Image1 resources:
+
+Dockerfile
+Copy code
+FROM image1 AS base
+# Use part of image1 resources
+COPY --from=base /app /app
+# Add new resources
+COPY additional-resources /app
+Code Coverage
+
+13. How to make all the containers talk to each other in Docker?
+
+Use Docker networks to allow containers to communicate.
+Example Docker Compose file with network:
+yaml
+Copy code
+version: '3'
+services:
+  app:
+    image: myapp
+    networks:
+      - mynetwork
+  db:
+    image: mydb
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+
+16. In Docker, what variables can you use in a Dockerfile?
+
+ARG: Define build-time variables.
+ENV: Define environment variables.
+
+
+17. What is the purpose of args in Docker?
+
+ARG: Allows you to pass build-time variables into the Dockerfile.
+18. What is the difference between COPY and ADD commands?
+
+COPY: Simple copy of files and directories.
+ADD: Supports additional features like extracting tar files and downloading from URLs.
+
+
+19. Is there any other advantage with COPY and ADD?
+
+COPY: Generally preferred for simple copying tasks.
+ADD: Useful for more complex tasks like handling tar files or remote URLs.
+
+
+20. Will COPY work with remote locations?
+
+No, COPY does not support remote locations. For remote file downloads, use ADD.
+
+
+Containerization
+
+4. Have you worked on Containerization?
+
+Answer: Yes, I have worked with containerization technologies such as Docker. I have experience creating Docker images, managing containers, and deploying applications using Docker.
+
+
+5. What type of project have you worked on: is it Java-based or .NET-based?
+
+Answer: I have worked on both Java-based and .NET-based projects. My experience includes deploying Java applications in Docker containers and managing .NET applications in a CI/CD pipeline.
+
+6. Need to deploy a Java-based application inside a POD and for that, you have to use any base image and the Java image as the custom-based image. How will you deploy?
+
+Answer:
+
+Create a Dockerfile:
+
+Dockerfile
+Copy code
+FROM openjdk:11-jre
+COPY target/myapp.jar /app/myapp.jar
+ENTRYPOINT ["java", "-jar", "/app/myapp.jar"]
+Build the Docker image:
+
+bash
+Copy code
+docker build -t my-java-app .
+Write a Pod Manifest:
+
+yaml
+Copy code
+apiVersion: v1
+kind: Pod
+metadata:
+  name: java-app-pod
+spec:
+  containers:
+  - name: java-app
+    image: my-java-app
+    ports:
+    - containerPort: 8080
+Deploy the Pod:
+
+bash
+Copy code
+kubectl apply -f pod-manifest.yaml
+
+
+7. Please write a Dockerfile.
+
+Answer:
+
+Dockerfile
+Copy code
+# Use an official base image
+FROM ubuntu:20.04
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    vim
+
+# Set environment variables
+ENV APP_HOME /app
+
+# Create application directory
+RUN mkdir -p $APP_HOME
+
+# Set working directory
+WORKDIR $APP_HOME
+
+# Copy application files
+COPY . .
+
+# Expose port
+EXPOSE 8080
+
+# Define the command to run the application
+CMD ["./myapp"]
+
+15. Difference between CMD and ENTRYPOINT in Docker?
+
+Answer:
+
+CMD: Provides default arguments for the ENTRYPOINT instruction or specifies the command to run when the container starts. Can be overridden by providing arguments in docker run.
+ENTRYPOINT: Specifies the command that will always be executed when the container starts. CMD can provide default arguments to this command.
+
+18. Write any Dockerfile.
+
+Answer:
+
+Dockerfile
+Copy code
+# Use an official Python runtime as a parent image
+FROM python:3.8-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the current directory contents into the container
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+
+
+how do you optimize docker images for size
+
+Optimizing Docker Images for Size
+Optimizing Docker Images:
+
+Multi-Stage Builds: Separate build and runtime stages to reduce the final image size.
+Minimal Base Images: Use smaller base images like alpine.
+Remove Unnecessary Files: Delete temporary files and caches during the build process.
+User URL Navigation to Pod/Container
+Flow:
+
+User Hits URL: User request is sent to a DNS service (e.g., Route 53).
+Ingress Controller: Directs the request to the appropriate service within the cluster.
+Service: Load balancer distributes the request to one of the pods.
+Pod/Container: Processes the request and sends the response back to the user.
+
