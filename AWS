@@ -1,0 +1,777 @@
+AWS
+
+AWS
+
+2. Have you worked with AWS DevOps?
+
+Answer:
+Yes, I have worked extensively with AWS DevOps, including services such as AWS CodePipeline, CodeBuild, CodeDeploy, and CodeCommit. I have also used CloudFormation and Terraform for infrastructure automation.
+
+
+
+8. How can you view the previous build result in AWS CodeBuild?
+Answer:
+You can view previous build results in AWS CodeBuild by navigating to the CodeBuild console, selecting the specific build project, and then reviewing the build history where you can see logs and details of past builds.
+
+10. What is CodeStar in AWS?
+Answer:
+AWS CodeStar is a service that provides a unified user interface to easily manage software development activities. It integrates various AWS services like CodeCommit, CodeBuild, CodeDeploy, and CodePipeline to help you set up a CI/CD pipeline quickly.
+
+20. If we have a private subnet, is it possible to make a public subnet?
+Answer:
+Yes, by associating a route table with an internet gateway to the subnet.
+
+21. How to organize an EC2 instance to run behind an Application Load Balancer?
+Answer:
+
+Create an ALB.
+Register the EC2 instance with the ALB target group.
+Create a listener rule for the ALB to forward traffic to the target group.
+
+
+22. How to allow traffic for only HTTPS?
+Answer:
+
+Set up a security group to allow inbound traffic on port 443.
+Configure the ALB listener to listen on port 443 and forward traffic to the target group.
+
+
+23. How to make a domain with an ELB?
+Answer:
+
+Create an ALB.
+Register the domain with Route 53.
+Create a Route 53 record set pointing to the ALB DNS name.
+
+
+24. Do you manage RDS? Which engine do you use?
+Answer:
+Yes, I manage RDS. I have used MySQL, PostgreSQL, and Aurora.
+
+25. In RDS, what is read replicas?
+Answer:
+Read replicas are used to offload read traffic and improve scalability.
+
+26. What are Parameter groups in RDS? Default parameters?
+Answer:
+Parameter groups are a collection of configuration settings for RDS instances. Default parameters are the pre-configured settings provided by AWS.
+
+27. If you want to enable cron schemas and expressions inside the RDS, how will you do?
+Answer:
+You can enable and configure event scheduler parameters using a custom parameter group.
+
+
+AWS Questions
+
+1. Suppose I have an instance and I am trying to connect to it but I am getting an error. What might be the reason?
+
+Possible reasons include:
+Security group rules not allowing SSH/RDP access.
+Incorrect key pair.
+Instance not running.
+Network ACLs blocking traffic.
+VPC route table misconfiguration.
+Instance not having a public IP address.
+
+
+2. I am getting error device name invalid when I am trying to connect to EC2. What might be the reason?
+
+This could be due to:
+Incorrect device name used in the configuration.
+EBS volume not attached properly.
+Volume mount issues in the instance OS.
+
+
+3. Have you used AWS RDS? Then what is the difference between read replicas and multi-AZ?
+
+Read Replicas: Used for read scaling and offloading read traffic. They provide asynchronous replication and can be in the same or different region.
+Multi-AZ: Provides high availability and failover support. It synchronously replicates data to a standby instance in another AZ within the same region.
+
+
+4. In Multi-AZ, do the user requests go to both primary and replicas?
+
+No, user requests only go to the primary instance. The standby instance is only used for failover in case of a primary instance failure.
+
+
+5. Explain S3 lifecycle management.
+
+S3 lifecycle management allows you to define rules to automatically transition objects to different storage classes (e.g., from Standard to Glacier) and/or delete objects after a certain period.
+
+
+6. What is a CNAME record in Route 53?
+
+A CNAME (Canonical Name) record maps an alias name to the true or canonical domain name.
+
+7. How do you bind an SSL certificate in ALB?
+
+You can bind an SSL certificate to an ALB by creating a listener on port 443 and selecting the SSL certificate from ACM (AWS Certificate Manager) or uploading a custom certificate.
+
+
+8. What is Access Key Rotation?
+
+Access Key Rotation involves periodically changing the AWS access keys for security reasons and updating applications and services to use the new keys.
+
+
+9. Suppose I create resources in account A and I want to provide access to resources in account B. How do you do that?
+
+Use IAM roles and cross-account access policies to grant permissions to resources in account B.
+
+
+10. What are log groups in CloudWatch?
+
+Log groups in CloudWatch are a collection of log streams that share the same retention, monitoring, and access control settings.
+
+
+11. Suppose some user has corrupted an EC2 instance. How will you find out?
+
+Check CloudTrail logs, CloudWatch logs, and instance logs to trace user actions and identify suspicious activities.
+
+9. Different Services You Have Worked with in AWS
+EC2: Compute instances.
+S3: Object storage.
+RDS: Managed relational database service.
+Lambda: Serverless computing.
+VPC: Virtual private cloud.
+ECS/EKS: Container services.
+CloudWatch: Monitoring and logging.
+
+
+10. How to Integrate ALB
+Create an ALB in the AWS Management Console or via Terraform.
+Define target groups and listeners for the ALB.
+Register instances or services (such as ECS tasks) with the target groups.
+Configure security groups and routing rules to allow traffic to the ALB.
+
+1. CloudWatch: What Have You Worked on, and What is CloudWatch Insights?
+
+Amazon CloudWatch is a monitoring and observability service designed for DevOps engineers, developers, site reliability engineers (SREs), and IT managers. It provides data and actionable insights to monitor applications, understand and respond to system-wide performance changes, optimize resource utilization, and get a unified view of operational health.
+
+CloudWatch Insights is a feature within Amazon CloudWatch that allows you to interactively search and analyze your log data in Amazon CloudWatch Logs. It is used to query logs, perform calculations, and create visualizations to gain insights from your logs.
+
+2. Setting Up CloudWatch to Monitor CPU Usage and Restrict User Login
+Steps to monitor CPU usage of 100 servers to 80% and restrict user login to max 20 users for the next 20 days:
+
+Create CloudWatch Alarms for CPU Usage:
+
+Go to the CloudWatch console.
+Navigate to Alarms > Create Alarm.
+Select Metrics and choose the EC2 namespace.
+Select Per-Instance Metrics and choose the metric for CPU utilization for each of the 100 servers.
+Set the alarm condition to trigger when CPU utilization is greater than or equal to 80% for a specified period.
+Choose the actions to take when the alarm state is triggered, such as sending a notification to an SNS topic.
+Create Custom Metric for User Logins:
+
+Write a script on each server to count user logins and push this metric to CloudWatch using the PutMetricData API.
+Example script (Python):
+python
+Copy code
+import boto3
+import subprocess
+
+client = boto3.client('cloudwatch', region_name='your-region')
+
+def get_user_count():
+    result = subprocess.run(['who', '-q'], stdout=subprocess.PIPE)
+    user_count = int(result.stdout.decode().split('=')[1].strip())
+    return user_count
+
+def put_metric_data(count):
+    client.put_metric_data(
+        Namespace='Custom/UserLogins',
+        MetricData=[
+            {
+                'MetricName': 'UserLoginCount',
+                'Dimensions': [
+                    {
+                        'Name': 'InstanceId',
+                        'Value': 'your-instance-id'
+                    },
+                ],
+                'Value': count,
+                'Unit': 'Count'
+            },
+        ]
+    )
+
+user_count = get_user_count()
+put_metric_data(user_count)
+Create CloudWatch Alarms for User Logins:
+
+Go to the CloudWatch console.
+Navigate to Alarms > Create Alarm.
+Select Metrics and choose the Custom/UserLogins namespace.
+Select the metric for user logins and set the alarm condition to trigger when user logins are greater than or equal to 20.
+Choose the actions to take when the alarm state is triggered.
+Set the Alarm Duration:
+
+For both alarms, set the evaluation period and the threshold condition.
+Ensure that the alarms are active for the next 20 days by setting appropriate start and end times or manually disabling them after 20 days.
+
+5. Types of Autoscaling in AWS
+EC2 Auto Scaling: Automatically adjusts the number of EC2 instances.
+Application Auto Scaling: Scales services like DynamoDB, ECS, and Lambda.
+Elastic Load Balancing (ELB): Distributes incoming application traffic across multiple targets.
+
+
+6. What is Route 53 and How It Works?
+Amazon Route 53 is a scalable and highly available DNS and domain name registration service. It translates domain names into IP addresses and routes end-user requests to the appropriate resources in AWS.
+
+7. Current Project and AWS Services Used
+Current Project:
+
+Project Overview: Implementing a multi-region architecture for a web application with containerized microservices, automated CI/CD pipelines, and continuous monitoring.
+AWS Services Used:
+EC2: For running web servers and application servers.
+S3: For storing static content and backups.
+RDS: For managed relational databases.
+ECS/EKS: For container orchestration.
+CloudWatch: For monitoring and logging.
+IAM: For managing access and permissions.
+VPC: For network isolation and security.
+Route 53: For DNS and domain management.
+If you need more detailed explanations or additional questions answered, feel free to ask!
+
+1. Difference Between AWS Snapshot and AMI
+
+Snapshot: A backup of an EBS volume at a point in time.
+AMI: A snapshot plus additional configuration information (like the OS and installed software) used to create EC2 instances.
+
+2. Have You Ever Created Security Groups?
+Yes, security groups are used to control inbound and outbound traffic to AWS resources.
+
+3. Types of Load Balancers You Have Used
+
+Classic Load Balancer (CLB)
+Application Load Balancer (ALB)
+Network Load Balancer (NLB)
+
+5. Use of CloudFront
+Amazon CloudFront is a content delivery network (CDN) service that delivers content with low latency and high transfer speeds. It caches content at edge locations worldwide.
+
+1. CloudWatch Insights
+
+CloudWatch Insights is used to query logs and create visualizations for monitoring and troubleshooting applications and infrastructure.
+
+
+3. Types of Auto Scaling in AWS
+
+EC2 Auto Scaling: Automatically adjusts the number of EC2 instances.
+Application Auto Scaling: Scales services like DynamoDB, ECS, and Lambda.
+Elastic Load Balancing (ELB): Distributes incoming application traffic across multiple targets.
+
+4. Route 53 Overview
+Amazon Route 53 is a scalable and highly available DNS and domain name registration service. It translates domain names into IP addresses and routes end-user requests to the appropriate resources in AWS.
+
+5. Project Overview
+
+Project Overview: Implementing a multi-region architecture for a web application with containerized microservices, automated CI/CD pipelines, and continuous monitoring.
+AWS Services Used:
+EC2
+S3
+RDS
+ECS/EKS
+CloudWatch
+IAM
+VPC
+Route 53
+Feel free to ask if you have more questions or need further details on any topic!
+
+
+Cloud Service Models
+
+
+4. Difference between IaaS, PaaS, and SaaS.
+
+Difference between IaaS, PaaS, and SaaS:
+
+IaaS (Infrastructure as a Service): Provides virtualized computing resources over the internet. Examples: AWS EC2, Azure VMs.
+PaaS (Platform as a Service): Provides a platform allowing customers to develop, run, and manage applications without dealing with the underlying infrastructure. Examples: AWS Elastic Beanstalk, Google App Engine.
+SaaS (Software as a Service): Delivers software applications over the internet on a subscription basis. Examples: Google Workspace, Salesforce.
+
+
+5. I have data sitting on-prem and an application in AWS. Is it SaaS, PaaS, or IaaS?
+
+If you have data sitting on-premises and an application in AWS, it is considered a hybrid cloud model. The application in AWS can be either IaaS or PaaS, depending on how it is deployed and managed.
+
+25. There is a service called IAM in AWS. What is the difference between IAM and KMS?
+
+IAM (Identity and Access Management): Manages user access and permissions.
+KMS (Key Management Service): Manages encryption keys for securing data.
+
+
+26. What is the use of CDN?
+
+Content Delivery Network (CDN) like CloudFront distributes content to end-users with high availability and performance.
+
+
+27. Have you used any Database service in your experience?
+
+Examples include RDS (Relational Database Service) and DynamoDB (NoSQL).
+
+
+28. What if you want to use NoSQL in AWS?
+
+Use DynamoDB for NoSQL database needs.
+
+
+29. I already have an infrastructure with 10 jobs running. All of a sudden they stop working with out-of-memory issues. What will be the reason and how do you debug?
+
+Check resource usage with CloudWatch.
+Review logs for errors and memory usage patterns.
+Optimize application memory usage or scale resources.
+CI/CD and Jenkins
+
+
+32. What is CloudWatch and what all have you worked on? What is CloudWatch Insight?
+
+CloudWatch: AWS service for monitoring and logging.
+CloudWatch Insights: Provides interactive querying and analysis of logs.
+
+
+33. Where have you used CloudWatch in your project? 
+
+If you want to monitor and set CPU usage of 100 servers to 80% and restrict user login to max 20 users, how would you set up CloudWatch for
+
+14. In AWS, what services have you used?
+
+Answer:
+
+EC2
+S3
+VPC
+RDS
+ALB
+EKS
+IAM
+
+15. How will you secure an S3 bucket?
+
+Answer:
+
+Set bucket policies and access controls.
+Enable encryption (server-side or client-side).
+Use IAM roles and policies for fine-grained access.
+Enable logging and monitoring.
+
+16. What is the term PTR in Route53?
+
+Answer:
+
+PTR Record: A DNS record used for reverse DNS lookups. It maps an IP address to a domain name.
+
+17. What is the difference between a domain and a hosted zone?
+
+Answer:
+
+Domain: A user-friendly address (e.g., example.com) that maps to an IP address.
+Hosted Zone: A container in Route 53 that holds DNS records for a domain.
+
+2. What are the services you were using in AWS?
+
+Answer: In AWS, I have used:
+
+EC2 (Elastic Compute Cloud)
+S3 (Simple Storage Service)
+VPC (Virtual Private Cloud)
+RDS (Relational Database Service)
+ALB (Application Load Balancer)
+EKS (Elastic Kubernetes Service)
+IAM (Identity and Access Management)
+CloudWatch
+Lambda
+DynamoDB
+Route 53
+
+
+3. EC2 purchasing options.
+
+Answer:
+
+On-Demand Instances: Pay for compute capacity by the hour or second with no long-term commitment.
+Reserved Instances: Reserve instances for a one-year or three-year term with significant cost savings.
+Spot Instances: Bid for unused EC2 capacity at a reduced price.
+Savings Plans: Commit to a consistent amount of usage over a one or three-year term for cost savings.
+Dedicated Hosts: Physical servers dedicated to your use, providing more control over the physical server.
+
+
+4. Working on any instance, suddenly out of reach what will be your action plan?
+
+Answer:
+
+Check Instance Status: Use AWS Management Console or CLI to check if the instance is running.
+Verify Network Configurations: Check VPC, subnet, and security group settings to ensure they are correctly configured.
+Review Logs: Look at system logs and CloudWatch logs for any error messages.
+Check Connectivity: Ensure there are no issues with the network or IAM roles.
+Reboot Instance: Try rebooting the instance to see if it resolves the issue.
+Contact AWS Support: If the issue persists, contact AWS Support for assistance.
+
+
+5. Difference between NACL and Security Group?
+
+Answer:
+
+Network ACL (NACL): Operates at the subnet level and controls inbound and outbound traffic to and from subnets. Stateless, meaning rules must be defined for both inbound and outbound traffic.
+Security Group: Operates at the instance level and controls inbound and outbound traffic to instances. Stateful, meaning if an incoming request is allowed, the corresponding response is automatically allowed.
+
+
+6. Components of VPC?
+
+Answer:
+
+Subnets: Segments of a VPC's IP address range.
+Internet Gateway: Allows communication between instances in a VPC and the internet.
+NAT Gateway: Allows instances in a private subnet to access the internet.
+Route Tables: Define how traffic is routed within the VPC.
+Security Groups: Virtual firewalls for instances to control inbound and outbound traffic.
+Network ACLs: Control inbound and outbound traffic at the subnet level.
+VPC Peering: Connects two VPCs to route traffic between them.
+
+
+7. Suppose you need to create 2 private and 2 public subnets, but you have created 1 public subnet and 3 private subnets. How will you convert one private subnet to a public subnet?
+
+Answer:
+
+Update Route Table: Add a route to the Internet Gateway in the route table associated with the private subnet.
+Modify Subnet Settings: Ensure that the subnet's route table directs traffic to the Internet Gateway for public access.
+
+
+8. Explain S3 lifecycle.
+
+Answer:
+
+S3 Lifecycle Policies: Automatically manage the lifecycle of objects in an S3 bucket. Policies can transition objects to cheaper storage classes (like S3 Glacier) or delete objects after a specified period. Useful for managing data retention and cost optimization.
+
+
+9. Data is present in the private subnet. How will you access the private subnet data?
+
+Answer:
+
+Bastion Host: Use a bastion host (jump server) in a public subnet to access the private subnet.
+VPN: Set up a VPN connection to securely connect to the private subnet.
+Direct Connect: Use AWS Direct Connect for a private, dedicated connection.
+
+
+10. Experience in AWS Lambda?
+
+Answer: Yes, I have experience with AWS Lambda. I have used it for creating serverless functions that run code in response to events, such as S3 uploads, DynamoDB changes, or API Gateway requests. Lambda enables the execution of code without managing servers.
+
+11. Experience in CloudWatch?
+
+Answer: Yes, I have used CloudWatch for monitoring and logging AWS resources. It provides metrics, logs, and alarms that help track the health and performance of applications and infrastructure.
+
+5.Have you set up a CDN?
+
+Yes, I have set up a CDN, such as AWS CloudFront, to distribute content globally and reduce latency. The CDN caches static content at edge locations to deliver it quickly to users.
+
+
+6.What network concepts are you aware of, and was the configuring of ACLs and NACLs done by your network team or you?
+
+Network Concepts: Subnets, VPCs, NAT Gateways, Security Groups, ACLs, NACLs, and DNS.
+Configuration: In some cases, network teams handle ACLs and NACLs, but I have also configured them as part of infrastructure provisioning, especially when using IaC tools like Terraform.
+
+8.How did you convince your management to go with Kafka bus? Did you give your design views or follow your architect's instructions?
+
+I presented a detailed analysis of Kafka's benefits, such as its scalability, fault tolerance, and support for real-time data streaming. This included use cases, cost analysis, and comparison with alternatives. I also worked closely with architects to ensure alignment with the overall design and architecture strategy.
+
+11.There is already a DevOps toolchain used; what would be your approach to analyze and propose a cost-effective approach?
+
+Analyze current tool usage, costs, and effectiveness. Identify any overlaps, inefficiencies, or underutilized tools. Propose alternatives or optimizations, such as consolidating tools or switching to more cost-effective solutions. Present a detailed cost-benefit analysis to management.
+
+
+12. How do you propose the new solution to your management, and how do you convince them?
+
+Prepare a comprehensive proposal including the problem statement, proposed solution, benefits, cost analysis, and implementation plan. Use data and case studies to support your arguments. Communicate clearly and address any potential concerns or risks. Engage with stakeholders to gather feedback and build support for the proposal.
+
+Are you aware of Amazon CodePipeline?
+
+Amazon CodePipeline is a continuous integration and delivery service that automates the build, test, and deploy phases of your release process. It integrates with other AWS services and third-party tools to automate end-to-end application delivery.
+
+You have EBS in one region; how do you take a backup to another region?
+
+Create a Snapshot: Create a snapshot of your EBS volume.
+Copy Snapshot to Another Region: Use the AWS CLI or Management Console to copy the snapshot to another region.
+bash
+Copy code
+aws ec2 copy-snapshot --source-region <source-region> --source-snapshot-id <snapshot-id> --destination-region <destination-region>
+
+
+My EC2 is full, how do you handle this?
+
+Expand Volume: Use AWS Console or CLI to increase the size of the EBS volume.
+bash
+Copy code
+aws ec2 modify-volume --volume-id <volume-id> --size <new-size>
+Resize Filesystem: Log in to the instance and resize the filesystem.
+bash
+Copy code
+sudo resize2fs /dev/xvdf
+Add Additional Volume: Attach a new volume to the instance and mount it.
+Clean Up: Remove unnecessary files and data to free up space.
+PPK or PEM file is deleted. What is the workaround to connect to the instance and get the data?
+
+EC2 Instance Connect: Use EC2 Instance Connect to access the instance.
+Use a Snapshot: Create a snapshot of the EBS volume and attach it to another instance where you have access.
+AWS Systems Manager (SSM): Use SSM Session Manager if the instance has the SSM agent installed and IAM role configured.
+What is Multi-AZ in RDS?
+
+Multi-AZ (Multiple Availability Zone) in Amazon RDS provides high availability and failover support for DB instances. RDS automatically creates a primary DB instance and synchronously replicates the data to a standby instance in a different Availability Zone.
+
+
+
+How to migrate on-premise VM to the cloud?
+
+AWS Server Migration Service (SMS): Use AWS SMS to automate the migration.
+VM Import/Export: Use AWS VM Import/Export to import your virtual machine image.
+CloudEndure Migration: Use CloudEndure Migration for lift-and-shift migrations.
+Manual Method: Export VM disk, upload to S3, and create an AMI.
+How do you connect on-premise VM to cloud?
+
+VPN (Virtual Private Network): Set up a VPN connection between the on-premises network and the cloud VPC.
+Direct Connect: Use AWS Direct Connect for a dedicated network connection.
+Hybrid Cloud Solutions: Use services like AWS Transit Gateway, AWS Outposts, or VMware Cloud on AWS for hybrid cloud connectivity.
+
+What are the different metrics which can be gathered via CloudFront?
+
+Metrics gathered via AWS CloudFront include:
+
+Cache Hit Ratio: Percentage of requests served from cache.
+Total Requests: Number of HTTP and HTTPS requests.
+Bytes Downloaded: Volume of data downloaded.
+Bytes Uploaded: Volume of data uploaded.
+4xx Error Rate: Percentage of client error responses.
+5xx Error Rate: Percentage of server error responses.
+Latency: Time taken to serve requests.
+Requests by Region: Distribution of requests across different geographic regions.
+Origin Latency: Time taken for CloudFront to receive the first byte from the origin.
+
+AWS:
+1. What are the AWS services you are aware of
+2. What are the resources and metrics which were monitored using cloud watch
+3. What are the networking concepts you are aware of. What is the use of a transit gateway
+4. Suppose you have multiple accounts how do you establish communication between VPC's using transit gateway in that case
+5. EKS cluster architecture created using cloud
+
+What are the AWS services you are aware of?
+
+Compute: EC2, Lambda, ECS, EKS
+Storage: S3, EBS, EFS, Glacier
+Database: RDS, DynamoDB, Redshift, Aurora
+Networking: VPC, Route 53, ELB, CloudFront, Direct Connect, Transit Gateway
+Management Tools: CloudWatch, CloudTrail, CloudFormation, AWS Config, Systems Manager
+Security: IAM, KMS, Shield, WAF
+Developer Tools: CodeCommit, CodeBuild, CodeDeploy, CodePipeline
+Analytics: Athena, EMR, Kinesis, QuickSight
+AI/ML: SageMaker, Rekognition, Comprehend
+Integration: SNS, SQS, Step Functions, EventBridge
+What are the resources and metrics which were monitored using CloudWatch?
+
+Resources: EC2 instances, RDS databases, EBS volumes, Lambda functions, ELB, ECS/EKS clusters, DynamoDB tables, S3 buckets
+Metrics:
+EC2: CPU utilization, disk I/O, network I/O, instance status
+RDS: CPU utilization, free storage space, read/write latency, DB connections
+EBS: Volume read/write ops, throughput, latency
+Lambda: Invocation count, duration, error count, throttles
+ECS/EKS: CPU and memory utilization of containers
+DynamoDB: Read/write capacity, throttled requests, latency
+S3: Bucket size, number of objects, GET/PUT requests
+What are the networking concepts you are aware of? What is the use of a transit gateway?
+
+Networking Concepts: Subnets, VPC, VPN, Direct Connect, Peering, Route Tables, Security Groups, NACLs, Load Balancers, NAT Gateways, CIDR blocks
+Transit Gateway: A service that enables customers to connect their Amazon VPCs and on-premises networks to a single gateway. It simplifies network architecture, reduces costs, and improves scalability by acting as a central hub for all network connections.
+Suppose you have multiple accounts, how do you establish communication between VPCs using a transit gateway in that case?
+
+Steps:
+Create a Transit Gateway: In the primary account.
+Share the Transit Gateway: Using AWS Resource Access Manager (RAM) to share the Transit Gateway with other AWS accounts.
+Attach VPCs: From different accounts to the Transit Gateway.
+Update Route Tables: In each VPC to route traffic through the Transit Gateway for communication between VPCs.
+Security Groups and NACLs: Ensure that the security configurations allow the necessary traffic between VPCs.
+EKS cluster architecture created using cloud:
+
+Control Plane: Managed by AWS, includes the Kubernetes API server, etcd, controller manager, and scheduler.
+Worker Nodes: EC2 instances running the kubelet and container runtime.
+Networking: VPC with subnets, security groups, and route tables. CNI plugins like AWS VPC CNI for pod networking.
+Storage: EBS for persistent volumes.
+Load Balancing: Application Load Balancer (ALB) or Network Load Balancer (NLB) for exposing services.
+Monitoring and Logging: CloudWatch for logs and metrics, Prometheus, and Grafana for Kubernetes-specific monitoring.
+
+EBS and EFS
+EBS (Elastic Block Store):
+
+Usage: Provides block-level storage volumes for use with EC2 instances.
+Features: Persistent storage, snapshots, various volume types (SSD, HDD), encryption.
+Performance: Designed for applications requiring single-instance storage with high throughput and low latency.
+EFS (Elastic File System):
+
+Usage: Provides scalable file storage for use with AWS services and on-premises resources.
+Features: Fully managed, scalable, POSIX-compliant file system, accessible from multiple EC2 instances.
+Performance: Suitable for workloads that require shared file access and throughput.
+
+what are the services experience you are having under AWS?
+what is the use of snap shot?
+You have EBS in a1 region, want to copy the content to a2 region is it possible? if possible how?
+difference between ellastic block storage and instance storage
+why you want to create vpc ? explain 
+different types of services in k8
+difference btween public subnet and private subnet
+under route53 what is private and public zone
+different types of routing policies
+What is multiaz in RDS
+
+AWS Services Experience
+AWS Services Experience:
+
+EC2 (Elastic Compute Cloud)
+S3 (Simple Storage Service)
+RDS (Relational Database Service)
+EKS (Elastic Kubernetes Service)
+VPC (Virtual Private Cloud)
+CloudWatch
+IAM (Identity and Access Management)
+Lambda
+SQS (Simple Queue Service)
+SNS (Simple Notification Service)
+Snapshot Use
+Snapshot:
+
+A snapshot is a point-in-time copy of an EBS volume.
+It is used for backup, recovery, and migration of data.
+Copying EBS Snapshot to Another Region
+Copying EBS Snapshot:
+
+Create a snapshot of the EBS volume in the source region (a1).
+Use the AWS Management Console, CLI, or SDK to copy the snapshot to the target region (a2).
+sh
+Copy code
+aws ec2 copy-snapshot --source-region a1 --source-snapshot-id snap-1234567890abcdef0 --region a2 --description "Copy of snapshot"
+Difference Between EBS and Instance Storage
+EBS (Elastic Block Store):
+
+Persistent Storage: Data persists independently of the instance lifecycle.
+Features: Snapshots, encryption, multiple volume types.
+Use Case: Databases, file systems, application data storage.
+Instance Store:
+
+Ephemeral Storage: Data is lost when the instance stops or terminates.
+Features: High IOPS, temporary storage.
+Use Case: Caching, temporary data, scratch data.
+VPC (Virtual Private Cloud)
+Creating VPC:
+
+Purpose: Isolate network resources, secure communication, and customize network configurations.
+Components: Subnets, route tables, internet gateways, NAT gateways, security groups, network ACLs.
+Types of Services in Kubernetes
+Kubernetes Services:
+
+ClusterIP: Exposes the service on an internal IP within the cluster.
+NodePort: Exposes the service on each Node’s IP at a static port.
+LoadBalancer: Exposes the service externally using a cloud provider’s load balancer.
+ExternalName: Maps a service to a DNS name.
+Public Subnet vs Private Subnet
+Public Subnet:
+
+Access: Has a route to the internet via an internet gateway.
+Use Case: Hosting public-facing applications and services.
+Private Subnet:
+
+Access: No direct route to the internet.
+Use Case: Hosting internal applications, databases, and backend services.
+Route53 Private and Public Zone
+Route53 Zones:
+
+Public Zone: Manages DNS records for a domain that is accessible over the internet.
+Private Zone: Manages DNS records for a domain that is accessible only within one or more VPCs.
+Types of Routing Policies
+Routing Policies in Route53:
+
+Simple Routing: Single resource without health checks.
+Weighted Routing: Distributes traffic based on specified weights.
+Latency Routing: Directs traffic to the lowest latency region.
+Failover Routing: Configures active-passive failover.
+Geolocation Routing: Routes traffic based on user location.
+Geoproximity Routing: Routes traffic based on the geographic location of users and resources.
+Multi-Value Answer Routing: Returns multiple healthy records.
+Multi-AZ in RDS
+Multi-AZ in RDS:
+
+Purpose: Provides high availability and failover support for DB instances.
+Configuration: RDS automatically creates a primary DB instance and synchronously replicates data to a standby instance in a different Availability Zone.
+
+
+13. Lambda Function
+AWS Lambda is a serverless compute service that runs code in response to events.
+14. Route 53 Configurations
+Hosted zones, records, routing policies, health checks.
+15. S3 Bucket Static Website Rules
+Enable static website hosting and set the index and error documents.
+16. IAM Policy for S3 Bucket
+json
+Copy code
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::example-bucket"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject"],
+      "Resource": ["arn:aws:s3:::example-bucket/*"]
+    }
+  ]
+}
+
+Configuring Load Balancer Using Route 53
+Create an ALB/NLB and add it to Route 53 DNS records.
+
+
+
+S3 and KMS in Different Regions
+Use cross-region replication and ensure permissions for KMS key.
+
+in route53 what is the use of hosted zone and record set
+4.difference b/w A record and quad A
+5.in ec2 instance what is the meaning of instance metadata and userdata and how you going to access them and where you find it 
+  and modify it(someone have given that) you joined lately and   you have to modify it (where does aws stores this data)
+6. write script in python or shell to tag ec2 instance if it's not tagged if it's tagged it has to skip it 
+
+2. AWS Services Used
+Compute: EC2, Lambda, ECS, EKS
+Storage: S3, EBS, EFS
+Database: RDS, DynamoDB
+Networking: VPC, Route 53, CloudFront, ELB/ALB
+Security: IAM, KMS, CloudTrail
+Management Tools: CloudFormation, CloudWatch, AWS Config
+Developer Tools: CodePipeline, CodeBuild, CodeDeploy
+3. Route 53: Hosted Zone and Record Set
+Hosted Zone: A container for DNS records for a specific domain.
+Record Set: Contains information about how you want to route traffic for a specific domain or subdomain.
+4. Difference between A Record and Quad A
+A Record: Maps a domain name to an IPv4 address.
+Quad A (AAAA) Record: Maps a domain name to an IPv6 address.
+5. EC2 Instance Metadata and User Data
+Instance Metadata: Information about your instance that you can use to configure or manage the running instance. Accessible via http://169.254.169.254/latest/meta-data/.
+User Data: Data that is supplied by the user at the time of instance launch. It can be used to perform common automated configuration tasks. Accessible via http://169.254.169.254/latest/user-data/.
+Modification:
+
+User data can be modified by stopping the instance, modifying the user data via the EC2 console or CLI, and then restarting the instance.
+6. Script to Tag EC2 Instance if Not Tagged
+Python (using Boto3):
+
+python
+Copy code
+import boto3
+
+ec2 = boto3.client('ec2')
+
+def tag_instance(instance_id, tags):
+    instance = ec2.describe_instances(InstanceIds=[instance_id])
+    if not instance['Reservations'][0]['Instances'][0].get('Tags'):
+        ec2.create_tags(Resources=[instance_id], Tags=tags)
+
+instance_id = 'i-0abcd1234efgh5678'
+tags = [{'Key': 'Name', 'Value': 'MyInstance'}]
+tag_instance(instance_id, tags)
+
