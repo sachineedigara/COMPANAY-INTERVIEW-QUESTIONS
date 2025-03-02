@@ -1,0 +1,416 @@
+TERRAFORM
+
+TERRAFORM
+
+
+1. How do you provision resources using AWS?
+
+Answer: Provisioning resources using AWS can be done through various methods such as AWS Management Console, AWS CLI, or Infrastructure as Code (IaC) tools like Terraform. Terraform is commonly used to automate the creation, modification, and deletion of AWS resources.
+
+2. Share your screen and open PowerPoint. Open a new page and write the structure of Terraform script how you will define the resource and deploy.
+
+Answer:
+Here’s the structure of a basic Terraform script for provisioning an AWS EC2 instance:
+
+hcl
+Copy code
+# Define the provider
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Define a variable
+variable "instance_type" {
+  description = "Type of EC2 instance"
+  default     = "t2.micro"
+}
+
+# Define the resource (EC2 instance)
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"  # Example AMI ID
+  instance_type = var.instance_type
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+
+# Output the public IP
+output "instance_ip" {
+  value = aws_instance.example.public_ip
+}
+
+
+3. Explain the lines of Terraform script and how it works
+
+Answer:
+provider "aws": Configures the AWS provider with the specified region.
+variable "instance_type": Defines a variable for the instance type, with a default value of t2.micro.
+resource "aws_instance" "example": Defines an EC2 instance resource using a specified AMI and instance type.
+output "instance_ip": Outputs the public IP address of the created EC2 instance.
+
+11. How to render the value from other resources in Terraform?
+Answer:
+You can reference values from other resources using interpolation syntax.
+
+Example:
+
+hcl
+Copy code
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.example.id
+}
+
+
+12. How to get the subnet id and vpc id in another resource block?
+Answer:
+You can use interpolation to get these values.
+
+Example:
+
+hcl
+Copy code
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.example.id
+  vpc_security_group_ids = [aws_vpc.example.id]
+}
+
+
+13. If VPC is in another module, how to access it in the configuration block?
+Answer:
+You can output the VPC ID from the module and then use that output in the configuration block.
+
+Example:
+
+hcl
+Copy code
+module "vpc" {
+  source = "./vpc"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  subnet_id     = module.vpc.subnet_id
+}
+
+
+14. Why do we use the state file?
+Answer:
+The state file keeps track of the current state of your infrastructure, enabling Terraform to manage resources and make changes effectively.
+
+15. You have EC2, VPC in your configuration. You do Terraform plan and apply. Then by mistake delete the state file. What will happen?
+Answer:
+If the state file is deleted, Terraform loses track of the resources it manages, and running terraform plan or terraform apply might recreate or alter existing resources incorrectly.
+
+16. How to do a refresh on the state file?
+Answer:
+You can refresh the state file by running terraform refresh.
+
+17. What is a tainted resource?
+Answer:
+A tainted resource is marked for destruction and recreation on the next terraform apply.
+
+18. On AWS, do you manage the infrastructure or only deployments?
+Answer:
+I manage both infrastructure and deployments.
+
+19. Do you manage the infrastructure using Terraform in your current project?
+Answer:
+Yes, I manage infrastructure using Terraform.
+
+Terraform Questions
+
+1. What commands have you used in Terraform?
+
+terraform init: Initializes the working directory with configuration files.
+terraform plan: Creates an execution plan, showing what actions Terraform will take.
+terraform apply: Applies the changes required to reach the desired state of the configuration.
+terraform destroy: Destroys the infrastructure managed by Terraform.
+terraform validate: Validates the configuration files.
+terraform refresh: Updates the state file with real-world infrastructure changes.
+terraform taint: Manually marks a resource for recreation.
+terraform import: Imports existing infrastructure into Terraform state.
+terraform state: Manipulates Terraform state files.
+terraform fmt: Formats the configuration files.
+
+2. How to rectify tainted resources?
+
+To rectify tainted resources, you can run terraform taint <resource> to mark a resource as tainted, and then run terraform apply to recreate it. Alternatively, you can use terraform untaint <resource> to mark the resource as healthy again if you don't want to recreate it.
+
+3. What are dependency logs in Terraform?
+
+Dependency logs in Terraform refer to the logs that record the order and relationship of resource creation. Terraform determines the dependency graph and executes resources accordingly.
+
+4. What is a data source and how is it useful?
+
+A data source allows you to fetch or compute information used by your configuration. Data sources enable you to use existing infrastructure resources defined outside Terraform or dynamically fetch information, like AMIs or subnet IDs, without creating new resources.
+
+5. Suppose I have created a resource through Terraform and did some manual changes. Next time when I run apply the resource should not be updated. What will you do?
+
+To ensure the resource is not updated, you can add the lifecycle block with the ignore_changes argument.
+hcl
+Copy code
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+  lifecycle {
+    ignore_changes = [ami, instance_type]
+  }
+}
+
+Which Approach to Choose?
+Scenario	Solution
+You want Terraform to ignore manual changes to specific attributes	Use ignore_changes
+You don't want Terraform to manage the resource anymore	Use terraform state rm
+You want to prevent Terraform from destroying the resource	Use prevent_destroy
+
+
+
+6. What is a root module and child module in Terraform?
+
+The root module is the directory where Terraform is executed. Child modules are any modules called by the root module or other child modules. Child modules enable the reuse of code and abstraction of complex configurations.
+
+
+6. Write a Script to Install EC2 by Terraform
+hcl
+Copy code
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-12345678"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+
+
+7. Reverting to a Previous Version of the State File
+To revert to a previous version of the state file:
+
+Use Terraform's built-in terraform state list and terraform state pull commands to identify and review state changes.
+Restore a backup of the state file manually if automatic backups are available.
+
+
+8. Install Previous Version of Plugin in Jenkins
+Go to Jenkins Plugin Manager.
+Download the .hpi or .jpi file of the desired version from the plugin’s GitHub releases or Jenkins Update Center archives.
+Upload the file through Jenkins Plugin Manager under "Advanced" tab -> "Upload Plugin".
+
+11. Difference Between Count and Each in Terraform
+count: Creates multiple instances of a resource based on a numeric value.
+for_each: Creates resources based on a set of strings or keys, useful for maps and lists.
+
+Terraform Questions
+
+1. What is the chance of recovering the state file if I am not managing the backup of the state file?
+The chance of recovering the state file without a backup is very low. If the state file is deleted or corrupted and no backup exists, you would need to reconstruct it manually by re-importing resources with terraform import. However, this process is complex and prone to errors. It's critical to regularly back up the state file.
+
+2. What is the use of gather facts in Ansible?
+gather_facts is a module in Ansible that collects system information (facts) about the managed nodes. These facts include details about the operating system, network interfaces, memory, CPU, and more. They can be used to make decisions within playbooks.
+
+
+Terraform Questions
+
+
+7. What Terraform commands are you familiar with?
+
+terraform init
+terraform plan
+terraform apply
+terraform destroy
+terraform fmt
+terraform validate
+terraform taint
+terraform import
+terraform refresh
+terraform state
+
+
+8. What kind of resources have you provisioned through Terraform?
+
+EC2 instances
+S3 buckets
+VPCs
+Subnets
+Security groups
+IAM roles and policies
+RDS instances
+Elastic Load Balancers (ALB/NLB)
+EKS clusters
+SQS queues
+SNS topics
+
+
+9. Why did you choose Terraform over CloudFormation?
+Terraform is chosen over CloudFormation due to its multi-cloud capabilities, flexibility, and the ability to manage resources from different providers. Terraform's HCL language is also more concise and easier to use.
+
+10. How do you use the environment variable present on a server which was created manually inside the Terraform configuration file?
+You can use the remote-exec provisioner to retrieve environment variables from a server and pass them to the Terraform configuration. Another method is to manually set environment variables and access them using the env function in Terraform.
+
+
+2. What is the advantage Terraform offers over Ansible?
+
+Advantage Terraform offers over Ansible:
+
+Declarative Language: Terraform uses a declarative language (HCL) which allows you to define the desired state of your infrastructure.
+State Management: Terraform keeps track of the infrastructure state, allowing you to manage changes and understand the current state of resources.
+Plan Command: Terraform’s plan command helps to preview changes before applying them, reducing the risk of unexpected changes.
+Resource Graph: Terraform builds a dependency graph of resources to ensure proper creation and destruction order.
+
+
+Terraform
+
+
+21. What is the template in Terraform?
+
+Templates allow you to reuse configurations and dynamically generate configurations based on variables.
+
+22. What happens when you apply Terraform Plan?
+
+terraform plan generates an execution plan showing what actions Terraform will perform to achieve the desired state.
+terraform apply applies the changes required to reach the desired state.
+
+
+23. What is the use of backup tfstate?
+
+The state file tracks the current state of infrastructure managed by Terraform.
+Backup ensures you can restore the state if needed.
+
+
+24. What is the importance of Null Resource and why do we need it?
+
+null_resource allows you to run arbitrary commands or scripts within Terraform, useful for non-resource-related actions.
+AWS
+
+
+18. Where have you kept your state file in your project?
+
+Answer:
+
+The state file is typically stored in a remote backend such as AWS S3 with state locking provided by DynamoDB.
+
+19. You have to create 4 EC2 instances in the London region. Execute the Terraform commands.
+
+Answer:
+
+hcl
+Copy code
+# main.tf
+provider "aws" {
+  region = "eu-west-2" # London region
+}
+
+resource "aws_instance" "example" {
+  count = 4
+  ami           = "ami-12345678"
+  instance_type = "t2.micro"
+}
+bash
+Copy code
+terraform init
+terraform plan
+terraform apply
+
+
+20. At which stage is the state file created?
+
+Answer:
+
+The state file is created during the terraform apply stage after Terraform has applied the configuration changes.
+Ansible and Jenkins
+
+When multiple people apply changes to Terraform configurations:
+
+Use Remote State: Store the state file in a remote backend like AWS S3 with state locking via DynamoDB.
+Implement CI/CD Pipelines: Integrate Terraform changes into a CI/CD pipeline to ensure that changes are reviewed and tested.
+Collaboration Practices: Use version control systems (e.g., Git) to manage changes and coordinate among team members.
+A developer does some wrong changes, but he hasn't committed his changes. What are the steps he would perform to rectify it?
+
+
+13
+What is the backend you used for Terraform? Could you write your backend config?
+
+For DynamoDB, the backend configuration in Terraform might look like:
+
+hcl
+Copy code
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state"
+    key            = "terraform.tfstate"
+    region         = "us-west-2"
+    dynamodb_table = "terraform-lock-table"
+  }
+
+
+why do you use state file ? how the state file configuration is done? why do you keep state file?
+
+
+Terraform State File
+State File:
+
+Usage: Tracks the state of infrastructure managed by Terraform.
+Configuration:
+hcl
+Copy code
+terraform {
+  backend "s3" {
+    bucket = "my-terraform-state"
+    key    = "path/to/my/key"
+    region = "us-west-2"
+  }
+}
+Purpose: Maintains the mapping of real-world resources to Terraform configuration, enabling consistent management and updates.
+State Locking:
+
+Purpose: Prevents concurrent operations from modifying the state file.
+Implementation: Typically achieved using a locking mechanism like DynamoDB when using remote state storage.
+
+write a terraform to create a ec2 instance and change the default ip to ellastic ip?
+
+
+Terraform to Create an EC2 Instance and Assign Elastic IP
+hcl
+Copy code
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+}
+
+resource "aws_eip" "example_eip" {
+  instance = aws_instance.example.id
+}
+
+Difference b/w resource & module in terraform
+
+ Resource vs Module in Terraform
+Resource: Single infrastructure component.
+Module: Group of resources used together.
+10. Deploying Multiple Environments Using a Single Module
+Use variable files (dev.tfvars, prod.tfvars, test.tfvars) and pass them during Terraform apply.
+sh
+Copy code
+terraform apply -var-file=dev.tfvars
+11. Maintaining Secrets in Terraform
+Use AWS Secrets Manager or HashiCorp Vault. Reference secrets using data blocks.
+12. State File vs Log File
+State File: Maintains the state of infrastructure.
+Log File: Records events or messages.
+
+Changing Terraform Version
+Terraform will reinitialize the backend and revalidate the configuration. If incompatible changes exist, it may throw errors.
+
+
