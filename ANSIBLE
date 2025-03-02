@@ -1,0 +1,185 @@
+ANSIBLE
+
+ANSIBLE
+
+
+10. Do you have knowledge on Bamboo and Puppet?
+Answer:
+
+Bamboo: Familiar with setting up build plans and deployment projects.
+Puppet: Experience in writing Puppet manifests to manage configuration state across servers.
+
+
+11. Explain how you used Ansible?
+Answer:
+Ansible Usage:
+
+Provisioning servers
+Deploying applications
+Managing configurations
+Example Playbook:
+
+yaml
+Copy code
+- name: Install and start Apache
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Install Apache
+      apt: name=apache2 state=latest
+
+    - name: Start Apache
+      service: name=apache2 state=started
+
+
+2. What is the use of gather facts in Ansible?
+gather_facts is a module in Ansible that collects system information (facts) about the managed nodes. These facts include details about the operating system, network interfaces, memory, CPU, and more. They can be used to make decisions within playbooks.
+
+3. Ansible Playbook to Check HTTP Server Status on Target Hosts
+
+yaml
+Copy code
+---
+- name: Check HTTP server status
+  hosts: webservers
+  gather_facts: no
+  tasks:
+    - name: Check if HTTP server is running
+      shell: systemctl is-active httpd
+      register: httpd_status
+      ignore_errors: yes
+
+    - name: Report HTTP server status
+      debug:
+        msg: "HTTP server is {{ httpd_status.stdout }} on {{ inventory_hostname }}"
+
+4. Copy a File from Host Machine to Target Host Machine Playbook
+
+yaml
+Copy code
+---
+- name: Copy file to target hosts
+  hosts: webservers
+  gather_facts: no
+  tasks:
+    - name: Copy file from local to remote
+      copy:
+        src: /path/to/local/file.txt
+        dest: /path/to/remote/file.txt
+
+5. Ansible Modules You Have Used
+
+copy
+shell
+service
+file
+package
+user
+group
+git
+yum
+apt
+systemd
+lineinfile
+
+3. Can I use Ansible for provisioning?
+
+Yes, Ansible can be used for provisioning infrastructure. It is more commonly used for configuration management, but it can also handle provisioning tasks.
+
+21. Do you have knowledge of Ansible? Can you do provisioning in Ansible?
+
+Answer: Yes, I have knowledge of Ansible and can perform provisioning tasks such as configuring servers, deploying applications, and managing infrastructure.
+
+17. Write any Ansible playbook.
+
+Answer:
+
+yaml
+Copy code
+- name: Install and start Apache
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install httpd
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+20. Explain how you can install HTTPD in 100 servers.
+
+Answer:
+
+Using Ansible: Write an Ansible playbook to install HTTPD on all servers.
+yaml
+Copy code
+- name: Install HTTPD on multiple servers
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Install httpd
+      yum:
+        name: httpd
+        state: present
+
+How many target hosts have you managed via Ansible?
+
+The number of target hosts managed by Ansible can vary widely. Ansible is designed to scale from small to very large environments. For specific numbers, check your inventory files or Ansible Tower/AWX configuration.
+
+Explain Ansible facts.
+
+Ansible facts are variables collected from managed nodes, including system information such as IP addresses, OS version, and available memory. These facts are gathered using the setup module and are used to make decisions in playbooks.
+
+Explain server provisioning and configuration management you used in your project.
+
+Provisioning: Creating and configuring servers (e.g., using Terraform for infrastructure setup).
+Configuration Management: Managing server configurations and software (e.g., using Ansible for deploying applications and ensuring configurations).
+
+13
+What are the cost optimization steps you have taken for your AWS services?
+
+Right-Sizing: Choose appropriate instance types based on usage.
+Reserved Instances: Purchase reserved instances for long-term workloads.
+Auto-Scaling: Automatically adjust capacity based on demand.
+Cost Explorer: Use AWS Cost Explorer to monitor and analyze spending.
+Spot Instances: Use spot instances for non-critical workloads.
+Feel free to ask for more details or any additional questions you have!
+
+Difference b/w play and playbook
+
+8. Play vs Playbook
+Play: Single set of tasks executed on hosts.
+Playbook: YAML file containing multiple plays.
+
+ How you connect 5 vpc ? 
+
+Connecting 5 VPCs
+Use Transit Gateway or VPC Peering.
+
+24. Executing a Single Task in Ansible
+sh
+Copy code
+ansible <host-pattern> -m <module> -a "<module-arguments>"
+25. Adhoc Commands
+ansible all -m ping
+ansible all -m shell -a 'uptime'
+26. Declaring Variables in Ansible
+yaml
+Copy code
+---
+- hosts: all
+  vars:
+    http_port: 80
+  tasks:
+    - name: Start service
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
