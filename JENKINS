@@ -46,6 +46,10 @@ Answer:
 SAST (Static Application Security Testing): Examines source code for security vulnerabilities without executing the code.
 DAST (Dynamic Application Security Testing): Tests a running application to identify security vulnerabilities by simulating external attacks.
 
+8. Install Previous Version of Plugin in Jenkins
+Go to Jenkins Plugin Manager.
+Download the .hpi or .jpi file of the desired version from the plugin’s GitHub releases or Jenkins Update Center archives.
+Upload the file through Jenkins Plugin Manager under "Advanced" tab -> "Upload Plugin".
 7. How will do automated performance testing and where it will fit in the CI and CD pipeline?
 Answer:
 
