@@ -1,0 +1,64 @@
+JIRA
+
+JIRA
+
+12. Have you worked on JIRA?
+
+Answer: Yes, I have worked on JIRA for project management, tracking issues, and coordinating tasks across teams.
+
+13. How integration of JIRA with Jenkins and GitHub?
+
+Answer:
+
+Use JIRA plugins for Jenkins to link build status with JIRA issues.
+Configure GitHub webhooks to update JIRA issues on code commits.
+Example: Link commits with JIRA issues using commit messages like JIRA-123: Fixed bug.
+
+14. There are tasks related to code. How you will track which tasks correspond to which code related to that task?
+Answer:
+
+Tracking Tasks and Code in JIRA: Use JIRA issues keys in commit messages.
+Example: git commit -m "JIRA-123: Implemented new feature"
+Linking Tasks and Code: This links the commit to the JIRA issue, allowing you to track code changes related to specific tasks.
+Example Pipeline for Tracking JIRA Issues:
+
+Commit: Developer includes JIRA issue key in the commit message.
+Build and Test: Jenkins builds the code and runs tests.
+Deploy: Jenkins deploys the application.
+Update JIRA: Jenkins updates JIRA with the build status and links to the related commits.
+Automated Script Example for JIRA Update:
+
+groovy
+Copy code
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/your-repo.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh './build.sh'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh './test.sh'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh './deploy.sh'
+            }
+        }
+        stage('Update JIRA') {
+            steps {
+                sh './update-jira.sh'
+            }
+        }
+    }
+}
+This approach ensures that every code change is tracked back to the corresponding JIRA task, maintaining a clear linkage between development work and project management.
