@@ -1,0 +1,71 @@
+MONITORING 
+
+MONITORING TOOLS
+
+29. What monitoring tools are you using in your project?
+
+Answer:
+
+Prometheus: For metrics collection.
+Grafana: For visualizing metrics.
+ELK Stack: For logging and search capabilities.
+
+
+30. I am running 4 pods. I want to check if the memory assigned is free or not.
+
+Answer:
+
+bash
+Copy code
+kubectl top pods
+This command shows the resource usage of pods, including memory and CPU.
+
+7.Suppose an already created cluster is having performance issues. How do you troubleshoot it and optimize it?
+
+Troubleshooting: Check cluster metrics and logs using tools like Prometheus and Grafana. Analyze resource utilization, Pod status, and node health.
+Optimization: Optimize resource allocation by adjusting requests and limits, scaling Pods or nodes, and optimizing application performance. Consider upgrading hardware or reconfiguring the cluster for better performance.
+
+What are the different metrics you were monitoring via Prometheus-Grafana?
+
+Metrics monitored via Prometheus-Grafana include:
+
+CPU Usage: Metrics related to CPU usage of nodes and pods.
+Memory Usage: Monitoring memory consumption.
+Disk I/O: Disk read/write operations.
+Network Traffic: Network usage and latency.
+Application Performance: Application-specific metrics, such as request rates, error rates, and latency.
+Pod Status: Number of running, pending, and failed pods.
+Node Health: Node availability and health status.
+
+How did you integrate Grafana in your project?
+
+Data Sources: Configured Prometheus as a data source in Grafana.
+Dashboards: Created and customized dashboards to visualize metrics.
+Alerting: Set up alerting rules in Grafana to notify on certain thresholds.
+Access Control: Managed user access and permissions for Grafana.
+Have you worked on any real-time tracking and gathering the data to show the dashboard?
+
+Real-Time Tracking: Using Prometheus to collect real-time metrics from applications and infrastructure.
+Dashboards: Creating Grafana dashboards to display real-time data and trends.
+Alerting: Setting up real-time alerts based on collected metrics.
+What is a rail transit system, I don't know anything about it, help me to understand and explain in terms of a layman.
+
+Rail Transit System: A public transportation system that uses trains to move passengers within a city or between cities.
+Components: Trains, tracks, stations, and control systems.
+Benefits: Reduces traffic congestion, provides efficient and reliable transportation, environmentally friendly.
+The same for the power system project which I had worked for.
+
+Power System: A network of electrical components to generate, transmit, and distribute electricity.
+Components: Power plants, transmission lines, substations, and distribution networks.
+Operation: Power is generated at power plants, transmitted over long distances, and distributed to homes and businesses.
+What are the cybersecurity principles you are aware of?
+
+Confidentiality: Ensuring that sensitive information is accessible only to authorized users.
+Integrity: Protecting information from being altered by unauthorized users.
+Availability: Ensuring that information and resources
+
+21. Setting Up Monitoring and Logging
+Prometheus: Deploy Prometheus Operator.
+Grafana: Integrate with Prometheus and set up dashboards.
+Alerts: Configure Alertmanager with Prometheus for alerting.
+
