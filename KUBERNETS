@@ -1,0 +1,830 @@
+KUBERNETS
+
+KUBERNETS
+
+
+4. Have you worked with Kubernetes (K8s)?
+Answer:
+Yes, I have worked with Kubernetes for container orchestration, managing deployments, scaling applications, and ensuring high availability.
+
+5. Explain K8s architecture? How it works.
+Answer:
+Kubernetes architecture consists of:
+
+Master Node: Manages the cluster, runs the control plane components like API server, controller manager, scheduler, and etcd.
+Worker Nodes: Run the application workloads, host the kubelet, kube-proxy, and container runtime (e.g., Docker).
+Pods: The smallest deployable units in K8s, consisting of one or more containers.
+Services: Provide stable IPs and DNS names to access pods.
+Controllers: Manage the lifecycle of pods, such as ReplicaSets, Deployments, and StatefulSets.
+
+
+6. What type of failures you have seen in K8s?
+Answer:
+
+Pod crashes due to misconfigurations or resource limits
+Node failures or unavailability
+Network issues causing communication problems between pods
+API server or etcd outages impacting cluster management
+
+7. What happens if master node doesn't work?
+Answer:
+If the master node fails, the cluster cannot be managed, and no new pods can be scheduled. Existing applications may continue to run, but cluster state changes and scaling operations will be impacted. High availability configurations with multiple master nodes can mitigate this issue.
+
+
+
+1. Can you tell me about rolling updates in deployment?
+
+Answer:
+Rolling updates allow you to update the deployment of an application incrementally with zero downtime. In Kubernetes, this means updating a few pods at a time, ensuring that some instances of the application are always available. This is typically done using the kubectl rollout command.
+
+2. How to monitor the health of a pod?
+Answer:
+Health of a pod can be monitored using liveness and readiness probes:
+
+Liveness Probes: Check if the pod is running.
+Readiness Probes: Check if the pod is ready to serve traffic.
+Example:
+
+yaml
+Copy code
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8080
+  initialDelaySeconds: 3
+  periodSeconds: 3
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8080
+  initialDelaySeconds: 3
+  periodSeconds: 3
+
+
+3. How do we connect a deployment pod with a service?
+Answer:
+You can connect a deployment pod with a service by creating a Kubernetes Service that matches the labels of the pods in the deployment.
+
+Example:
+
+yaml
+Copy code
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+
+4. How to set up an Application Load Balancer as ingress for the EKS cluster?
+Answer:
+You can use the AWS Load Balancer Controller to set up an ALB as ingress for an EKS cluster. This involves installing the controller and creating an Ingress resource.
+
+5. How are you making the deployment using kubectl or any Helm charts?
+Answer:
+Deployments can be done using kubectl apply -f <manifest.yaml> for Kubernetes manifests or helm install <release-name> <chart-name> for Helm charts.
+
+6. In Helm charts, how to variablize?
+Answer:
+In Helm charts, you can use the values.yaml file to define variables, and reference them in templates using {{ .Values.variableName }}.
+
+Example:
+
+yaml
+Copy code
+# values.yaml
+replicaCount: 3
+
+# deployment.yaml
+replicas: {{ .Values.replicaCount }}
+
+
+Kubernetes Questions
+
+1. What are probes and how many have you used?
+
+Probes are mechanisms to check the health of a container. There are three types:
+Liveness Probe: Checks if the container is running.
+Readiness Probe: Checks if the container is ready to serve traffic.
+Startup Probe: Checks if the application within the container has started.
+
+
+2. Suppose I have updated my ConfigMap manifest file and without restarting or stopping the pod I want the changes to be accessed by Pod. How do you do that?
+
+Use the kubectl rollout restart command to restart the pods with the new ConfigMap without downtime.
+
+
+3. What is a DaemonSet and its use case?
+
+A DaemonSet ensures that a copy of a pod runs on all (or some) nodes in the cluster. Use cases include running logs collection daemons, monitoring agents, or other node-specific services.
+
+4. Kubernetes Architecture and kubectl
+Kubernetes Architecture:
+
+Master Node: Controls the Kubernetes cluster. It has components like API server, Controller Manager, Scheduler, and etcd.
+Worker Nodes: Where the actual applications run, each with a kubelet, kube-proxy, and a container runtime.
+kubectl: Command-line tool to interact with the Kubernetes API server. It performs actions like deploying applications, inspecting and managing cluster resources, and viewing logs.
+
+
+Kubernetes Questions
+
+1. Difference Between Service and Ingress in Kubernetes
+
+Service: Exposes a set of Pods as a network service. Commonly used to manage internal communication within the cluster and expose applications to external traffic (using types like NodePort and LoadBalancer).
+Ingress: Manages external access to services, typically HTTP and HTTPS. Provides load balancing, SSL termination, and name-based virtual hosting.
+
+2. Can You Expose Pods Without Ingress?
+Yes, you can expose Pods to the outside world using Services with types NodePort or LoadBalancer.
+
+3. Use of DaemonSet
+A DaemonSet ensures that all (or some) nodes run a copy of a Pod. Common use cases include log collection, monitoring agents, and other node-specific services.
+
+4. Troubleshooting Pod Creation Issues
+To troubleshoot why a pod is stuck in the "ContainerCreating" state, you can:
+
+Check the events: kubectl describe pod <pod-name>
+Check the logs: kubectl logs <pod-name> -c <container-name>
+Verify the node status: kubectl describe node <node-name>
+Ensure the necessary resources and permissions are available on the node.
+
+6. Helm Chart in Kubernetes Deployment
+Helm is a package manager for Kubernetes that allows you to define, install, and upgrade even the most complex Kubernetes applications. Helm Charts are pre-configured packages of Kubernetes resources.
+
+
+16. Use of Kubernetes
+Kubernetes provides orchestration for deploying, scaling, and managing containerized applications across clusters of hosts. While Docker manages individual containers, Kubernetes automates the deployment of many containers, providing high availability and scalability.
+
+17. Explain Ingress Controller and How You Specify the Routes
+An Ingress Controller manages external access to services in a Kubernetes cluster, typically through HTTP/HTTPS. It routes traffic based on rules defined in an Ingress resource.
+
+yaml
+Copy code
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+spec:
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: example-service
+            port:
+              number: 80
+
+
+14. Replicate the same scenario in Kubernetes.
+
+Use Kubernetes Services to expose pods internally.
+Define a Kubernetes Service to allow inter-pod communication.
+Communication Between Frontend and API
+
+
+8. During deployment, you will pull the image from ECR. What will you mention in the Manifest?
+
+Answer:
+
+yaml
+Copy code
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: <aws_account_id>.dkr.ecr.<region>.amazonaws.com/my-app:latest
+        ports:
+        - containerPort: 8080
+9. Please write a Pod Manifest for the same.
+
+Answer:
+
+yaml
+Copy code
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app-pod
+spec:
+  containers:
+  - name: my-app-container
+    image: <aws_account_id>.dkr.ecr.<region>.amazonaws.com/my-app:latest
+    ports:
+    - containerPort: 8080
+
+10. What if the POD is not running fine? What is the reason it went to CrashLoopBack?
+
+Answer:
+
+Possible Reasons:
+Incorrect image or tag.
+Application crashes due to configuration issues or missing dependencies.
+Resource constraints.
+Troubleshooting Steps:
+Check pod logs: kubectl logs <pod-name>
+Describe the pod: kubectl describe pod <pod-name>
+Check for events or errors in the pod description.
+
+
+11. What deployment strategy have you used in your project? What other strategies do you know?
+
+Answer:
+
+Used Strategy: Rolling Update
+Other Strategies:
+Blue/Green Deployment
+Canary Release
+Recreate Deployment
+
+12. What is namespace? What is the use of namespace?
+
+Answer:
+
+Namespace: A Kubernetes object used to divide cluster resources between multiple users or teams.
+Use: Helps in organizing and isolating resources within a cluster, provides access control, and helps in managing resources for different environments.
+
+
+13. Container running inside the pod. During deployment, you have copied some properties file related to the application. You found some files are missing, and the issue is with properties files. How will you check all the properties files?
+
+Answer:
+
+Verify: Check the Dockerfile or deployment configuration to ensure all necessary files are copied.
+Inspect: Use kubectl exec to access the running pod and verify the presence of properties files.
+bash
+Copy code
+kubectl exec -it <pod-name> -- /bin/bash
+ls /app/config
+AWS Services and Security
+
+16. Explain Kubernetes Auto-scaling.
+
+Answer:
+
+Horizontal Pod Autoscaler (HPA): Scales the number of pod replicas based on CPU utilization or other metrics.
+Vertical Pod Autoscaler (VPA): Adjusts the resource requests and limits of containers based on their usage.
+Cluster Autoscaler: Scales the number of nodes in the cluster based on the resource demands of the pods.
+
+1.Suppose your microservices are increasing, how do you scale horizontally or vertically?
+
+Horizontal Scaling: Add more instances of the microservices to distribute the load. This can be done by increasing the number of Pods in Kubernetes or scaling the service in a cloud environment.
+Vertical Scaling: Increase the resources (CPU, memory) allocated to each instance of the microservice. This involves adjusting resource requests and limits in Kubernetes or resizing instances in the cloud.
+
+
+2.How did you decide what should be the loads and how did you distribute your CPU and network load?
+
+Load Decisions: Analyze historical data, performance metrics, and expected growth to determine load requirements. Tools like Prometheus or CloudWatch can help in monitoring and forecasting.
+Distribution: Use load balancers to distribute network traffic across multiple instances. For CPU and memory, use autoscaling groups or Kubernetes Horizontal Pod Autoscalers to adjust resources based on metrics like CPU utilization or memory usage.
+
+Write deployment manifest file Including the deployment strategy
+
+A deployment manifest file in Kubernetes can define how applications are deployed, including the deployment strategy. Here’s an example of a deployment manifest using the rolling update strategy:
+
+yaml
+Copy code
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment
+  labels:
+    app: example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      containers:
+      - name: example-container
+        image: example-image:latest
+        ports:
+        - containerPort: 80
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+Deployment Strategy:
+
+RollingUpdate: Replaces old pods with new ones gradually, ensuring that some pods are always available.
+Recreate: Terminates all existing pods before creating new ones (not recommended for high-availability applications).
+How do you check CrashLoopBackOff error and identify the cause of it?
+
+To troubleshoot a CrashLoopBackOff error:
+
+bash
+Copy code
+kubectl describe pod <pod-name>
+kubectl logs <pod-name> --previous
+kubectl describe pod <pod-name>: Provides detailed information about the pod’s status and events.
+kubectl logs <pod-name> --previous: Shows logs of the previous container instance to diagnose the cause.
+How do you scale if the number of microservices increases?
+
+11 As the number of microservices increases:
+
+Use a Service Mesh: Tools like Istio or Linkerd can manage traffic and inter-service communication.
+Adopt Kubernetes Namespaces: Organize microservices into namespaces for better management.
+Implement Auto-scaling: Use Horizontal Pod Autoscalers (HPA) to adjust the number of pod replicas based on resource usage.
+Suppose two persons change the Terraform file and apply their changes. What would happen, and how do you prevent such a thing from happening?
+
+What have you done on Argo CD?
+
+Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes. Typical tasks may include:
+
+Application Deployment: Using Git repositories as the source of truth for defining the desired application state.
+Automated Sync: Configuring Argo CD to automatically synchronize the application state from Git to the Kubernetes cluster.
+Monitoring and Rollbacks: Monitoring application status and performing rollbacks if necessary.
+Multi-cluster Management: Managing deployments across multiple Kubernetes clusters.
+How were your microservices accessed by the end user externally?
+
+Ingress Controllers: Using Kubernetes Ingress controllers like NGINX, Traefik, or AWS ALB Ingress Controller to manage external access to the services.
+Load Balancers: Using cloud provider load balancers (e.g., AWS ELB/ALB/NLB) to distribute traffic to the microservices.
+API Gateway: Implementing API gateways (e.g., AWS API Gateway) to route, secure, and manage API traffic.
+DNS: Configuring DNS services to route user requests to the appropriate load balancers or ingress controllers.
+How do you monitor the EKS cluster? What are the tools involved?
+
+14 How do you monitor the EKS cluster? What are the tools involved?
+
+Monitoring an EKS cluster typically involves:
+
+Prometheus: Collecting and querying metrics from the Kubernetes cluster.
+Grafana: Visualizing metrics collected by Prometheus.
+CloudWatch: Using AWS CloudWatch for monitoring AWS resources and custom metrics.
+Fluentd/Fluent Bit: Collecting and aggregating logs.
+Kubernetes Dashboard: Web-based UI to monitor the Kubernetes cluster.
+ELK Stack: Elasticsearch, Logstash, and Kibana for logging and monitoring.
+Present your screen and write the architecture of your cluster
+
+Since I can't present a screen, I'll describe a typical architecture:
+
+Master Nodes: Control plane components (API server, scheduler, controller manager).
+Worker Nodes: Run applications in pods.
+Ingress Controller: Manages external access to services.
+Load Balancer: Distributes incoming traffic.
+Monitoring Tools: Prometheus, Grafana, CloudWatch.
+CI/CD Tools: Jenkins, Argo CD for deployments.
+What is Helm, how was it used in your project?
+
+Helm is a package manager for Kubernetes, used to streamline the installation and management of Kubernetes applications.
+
+Package Management: Using Helm charts to define, install, and upgrade applications.
+Version Control: Managing application versions and rollbacks.
+Templates: Using Helm templates to manage Kubernetes manifests dynamically.
+Repositories: Storing and sharing Helm charts in repositories.
+How did you configure Grafana and Prometheus for monitoring?
+
+Install Prometheus: Using Helm or manual manifests to deploy Prometheus.
+Configure Prometheus: Setting up Prometheus with appropriate scrape configs to collect metrics from Kubernetes nodes, pods, and services.
+Install Grafana: Using Helm or manual manifests to deploy Grafana.
+Integrate Grafana with Prometheus: Adding Prometheus as a data source in Grafana.
+Create Dashboards: Building custom dashboards in Grafana to visualize metrics.
+
+What is the deployment strategy you are aware of?
+
+Common deployment strategies include:
+
+Rolling Deployment: Incrementally updates instances of the application with zero downtime.
+Recreate Deployment: Shuts down the old version completely before deploying the new version.
+Blue-Green Deployment: Runs two identical environments (blue and green). The new version is deployed to the green environment, and after testing, traffic is switched from blue to green.
+Canary Deployment: Releases the new version to a small subset of users to test before a full rollout.
+A/B Testing: Similar to canary deployment, but used for testing new features on a subset of users and comparing the results to the control group.
+Why did you choose canary deployment?
+
+Canary deployment was chosen because:
+
+Risk Mitigation: It allows testing the new version on a small subset of users, reducing the risk of introducing bugs to all users.
+Feedback: Provides early feedback from real users, which can be used to make improvements before full deployment.
+Gradual Rollout: Enables a controlled, gradual rollout, making it easier to monitor the impact and rollback if necessary.
+What is blue-green deployment strategy?
+
+Blue-Green Deployment involves maintaining two identical production environments, known as Blue and Green:
+
+Blue Environment: The current live environment.
+Green Environment: The environment where the new version is deployed.
+After deploying the new version to the Green environment and performing tests, traffic is switched from the Blue environment to the Green environment. The Blue environment is kept as a backup until the Green environment is fully validated.
+
+Kubernetes:
+1. What is the use of daemonset. Suppose I want to create multiple replicas how to modify the daemonset
+2. How did you manage releases using helm. How was helm used in your project.
+3. You have made a kubernetes deployment and the deployment failed for some reason how do you troubleshoot it.
+4. How do you ensure your Jenkins deployment deployed to the right environment of Kubernetes(suppose you have dev, QA, pre-prod and prod environments)
+5. How did you create your kubernetes cluster using IAC, explain the steps involved
+6. What is your understanding about ArgoCD.
+
+Kubernetes:
+What is the use of a DaemonSet? Suppose I want to create multiple replicas, how to modify the DaemonSet?
+
+DaemonSet: Ensures that a copy of a pod runs on all (or some) nodes in the cluster. Used for deploying node-level components like log collectors or monitoring agents.
+Multiple Replicas: DaemonSets are designed to run a single replica per node. To run multiple replicas per node, use a Deployment instead of a DaemonSet.
+How did you manage releases using Helm? How was Helm used in your project?
+
+Managing Releases:
+Version Control: Using Helm charts to version and manage Kubernetes manifests.
+Rollbacks: Easy rollback to previous versions if needed.
+Environment Configuration: Using values files for different environments (dev, QA, prod).
+Usage:
+Packaging: Helm charts for packaging Kubernetes resources.
+Deployment: Using Helm to deploy applications across different environments.
+Templates: Dynamic templates for Kubernetes manifests, enabling parameterization.
+You have made a Kubernetes deployment and the deployment failed for some reason. How do you troubleshoot it?
+
+Check Deployment Status: kubectl get deployments
+Describe Deployment: kubectl describe deployment <deployment-name>
+Check Pod Status: kubectl get pods
+Describe Pod: kubectl describe pod <pod-name>
+Logs: kubectl logs <pod-name>
+Events: kubectl get events
+Configuration: Verify YAML/Helm chart configurations for errors.
+How do you ensure your Jenkins deployment deployed to the right environment of Kubernetes (suppose you have dev, QA, pre-prod, and prod environments)?
+
+Environment Variables: Use environment-specific variables in Jenkins pipelines.
+Context: Switch Kubernetes context to the target environment.
+Namespace: Deploy to specific namespaces for different environments.
+Configuration Files: Use separate configuration files or values files for each environment.
+Validation: Include checks in the pipeline to ensure the correct environment is targeted.
+How did you create your Kubernetes cluster using IaC, explain the steps involved?
+
+Choose IaC Tool: Terraform or AWS CloudFormation.
+VPC Setup: Define VPC, subnets, route tables, and security groups.
+EKS Cluster: Create EKS cluster resource.
+Node Groups: Define and create node groups (managed or self-managed).
+IAM Roles: Create necessary IAM roles and policies.
+Networking: Configure VPC CNI plugin for pod networking.
+Output Configuration: Save kubeconfig for accessing the cluster.
+What is your understanding of Argo CD?
+
+GitOps Tool: Manages Kubernetes deployments using Git repositories as the source of truth.
+Declarative: Uses declarative GitOps to define and automate application deployments.
+Synchronization: Automatically syncs the desired state from Git to the Kubernetes cluster.
+Monitoring and Rollbacks: Monitors application state and allows easy rollbacks if needed.
+Multi-cluster Support: Manages deployments across multiple clusters.
+Management:
+How come you were promoted as a DevOps manager, how did this transition happen?
+
+Experience and Expertise: Extensive experience in DevOps practices, tools, and methodologies.
+Leadership: Demonstrated leadership skills by taking initiative, mentoring team members, and leading projects.
+Communication: Effective communication with stakeholders, team members, and customers.
+Results: Consistent delivery of high-quality results and improvements in processes and infrastructure.
+Professional Development: Pursued continuous learning and certifications to enhance skills.
+
+
+
+explain the componenets of kubernetes?
+
+Kubernetes Components
+Kubernetes Components:
+
+Master Node Components:
+API Server: Front-end for the Kubernetes control plane.
+etcd: Key-value store for cluster data.
+Scheduler: Assigns nodes to newly created pods.
+Controller Manager: Manages controllers that handle routine tasks.
+Worker Node Components:
+Kubelet: Ensures containers are running.
+Kube-Proxy: Handles networking for the pods.
+Container Runtime: Software that runs the containers (e.g., Docker, containerd)
+
+explain the claster architecture
+
+Kubernetes Cluster Architecture
+Cluster Architecture:
+
+Control Plane: Manages the overall state of the cluster (API server, etcd, scheduler, controller manager).
+Worker Nodes: Run the applications (kubelet, kube-proxy, container runtime).
+Networking: Uses CNI plugins for pod networking, service networking, and ingress controllers.
+High Traffic Pod Scaling
+Pod Auto-Scaling:
+
+Horizontal Pod Autoscaler (HPA): Automatically scales the number of pods based on CPU utilization or other select metrics.
+Metrics Server: Collects resource metrics from nodes.
+HPA Configuration:
+yaml
+Copy code
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+
+
+when a user hit the url? the user is getting navigated to respective pod/container how that flow goes? 
+
+Kubernetes Load Balancer
+Kubernetes Load Balancer:
+
+Type: LoadBalancer service type automatically provisions an external load balancer.
+Function: Distributes incoming traffic to the pods in a service.
+Init Container
+Init Container:
+
+Purpose: Runs before the main application container starts.
+Use Case: Used for tasks like setting up environment variables, configuration, or dependencies that need to be completed before the application starts.
+Checking CrashLoopBackOff Error
+Troubleshooting CrashLoopBackOff:
+
+Check Pod Status: kubectl get pods
+Describe Pod: kubectl describe pod <pod-name>
+Logs: kubectl logs <pod-name>
+Events: kubectl get events
+Configuration: Verify YAML/Helm chart configurations for issues.
+
+
+why mounting is used?
+what is object storage? have you worked on object storage
+what are the types of object storage?
+what is diference docker swarm and kubernetes?
+what are the services available in k8?
+Difference between ClusterIp and NodePort?
+
+Mounting
+Mounting:
+
+Purpose: Attaching a storage device (e.g., disk, partition) to a specific directory in the file system hierarchy.
+Use Case: Accessing data on different storage devices.
+Object Storage
+Object Storage:
+
+Purpose: Stores unstructured data as objects (files, metadata, identifiers).
+Use Case: Storing large amounts of data such as backups, archives, multimedia files.
+Types of Object Storage:
+
+S3 (Simple Storage Service): AWS’s scalable object storage service.
+Docker Swarm vs Kubernetes
+Docker Swarm:
+
+Ease of Use: Simpler to set up and manage.
+Features: Native clustering and orchestration for Docker containers.
+Kubernetes:
+
+Complexity: More complex with a steep learning curve.
+Features: Extensive orchestration features, scalability, high availability, rich ecosystem.
+Kubernetes Services
+Kubernetes Services:
+
+ClusterIP
+NodePort
+LoadBalancer
+ExternalName
+ClusterIP vs NodePort
+ClusterIP:
+
+Access: Internal access within the cluster.
+Use Case: Inter-service communication.
+NodePort:
+
+Access: Exposes the service on each node’s IP at a static port.
+Use Case: Accessing the service from outside the cluster.
+
+Types of monitoring tools to monitor docker/K8s
+What is daemonset.I want to create multiple replicas how you modify the daemonset
+Type of K8s setup used to host database
+how to deploy the app in different environment like dev ,QA, Prod?
+what is the use of persistant volume and Persistent volume claim (PVC) ? explain with example?
+
+Monitoring Tools for Docker/Kubernetes
+Monitoring Tools:
+
+Prometheus: Monitoring and alerting toolkit.
+Grafana: Visualization and analytics.
+ELK Stack: Elasticsearch, Logstash, Kibana for log management.
+Datadog: Cloud monitoring and security.
+New Relic: Application performance monitoring.
+DaemonSet
+DaemonSet:
+
+Purpose: Ensures that a copy of a pod runs on all (or some) nodes.
+Modification for Multiple Replicas: DaemonSet runs one pod per node by design, for multiple replicas on each node, consider using Deployment with node affinity.
+Kubernetes Setup for Hosting Database
+Database Hosting:
+
+StatefulSet: Manages stateful applications with stable network identities and persistent storage.
+Deploying Apps in Different Environments
+Deploying Apps:
+
+Helm Charts: Use Helm values files to define environment-specific configurations.
+Jenkins Pipelines: Define separate stages for different environments.
+Persistent Volume and Persistent Volume Claim
+Persistent Volume (PV):
+
+Purpose: Represents a piece of storage in the cluster.
+Example:
+yaml
+Copy code
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-example
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /mnt/data
+Persistent Volume Claim (PVC):
+
+Purpose: Requests storage resources for a pod.
+Example:
+yaml
+Copy code
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-example
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+Additional Questions
+Kubernetes Cluster Architecture:
+
+Control Plane: Manages the cluster (API server, etcd, scheduler, controller manager).
+Worker Nodes: Run applications (kubelet, kube-proxy, container runtime).
+High Traffic Pod Scaling:
+
+Horizontal Pod Autoscaler (HPA) scales pods based on resource usage.
+yaml
+Copy code
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+Optimizing Docker Images:
+
+Use multi-stage builds, minimal base images, and remove unnecessary files.
+URL Navigation to Pod/Container:
+
+DNS -> Ingress Controller -> Service -> Pod/Container.
+Kubernetes Load Balancer:
+
+Type: LoadBalancer service type provisions an external load balancer.
+Init Container:
+
+Runs setup tasks before the main container starts.
+CrashLoopBackOff Error:
+
+Check pod status, describe the pod, view logs, check events, and verify configurations.
+
+1. What type of cluster your using in your organization? How many cluster your maintaining in your organization
+2. In 10 nodes I want to change 3 nodes as instance type t2 to t3 series. How can I change it ? where I have this option?
+3. Explain how your going to setup & monitor your cluser step by step . Explain each process
+4. What is the command to loggining into pod 
+5. what is exec stands for
+6. How you will allocate the metrix? 
+
+Altimetrik: Detailed Responses
+1. Type and Number of Clusters
+Cluster Type:
+
+Typically, Kubernetes clusters (EKS or self-managed).
+Number of Clusters:
+This varies, but let's assume there are multiple clusters for different environments (dev, test, prod).
+2. Change Instance Type from T2 to T3
+Steps:
+
+Identify the Nodes: Find the nodes that need the change.
+Drain the Nodes: Safely drain the nodes to move pods.
+sh
+Copy code
+kubectl drain <node-name> --ignore-daemonsets
+Stop Instances: Stop the instances in the AWS console.
+Change Instance Type: Modify the instance type from T2 to T3 in the AWS console.
+Restart Instances: Start the instances again.
+Uncordon the Nodes: Make the nodes schedulable.
+sh
+Copy code
+kubectl uncordon <node-name>
+3. Setting Up and Monitoring Clusters
+Setup:
+
+Provisioning Infrastructure: Use Terraform/CloudFormation to create VPC, subnets, etc.
+EKS Cluster: Create EKS cluster using AWS CLI or Terraform.
+Node Groups: Configure node groups (EC2 instances).
+Deploy Kubernetes Components: Helm, Ingress controllers, etc.
+Monitoring:
+
+Prometheus: Install Prometheus for metrics collection.
+Grafana: Set up Grafana for visualization.
+Alertmanager: Configure alerts based on Prometheus metrics.
+Cluster Logging: Use Fluentd/Fluent Bit to collect logs and store them in Elasticsearch or CloudWatch.
+4. Command to Log into a Pod
+sh
+Copy code
+kubectl exec -it <pod-name> -- /bin/bash
+5. exec Command
+exec: Execute a command in a container.
+
+6. Allocating Metrics
+Configure metrics server, Prometheus, and custom metrics using Kubernetes resources like Horizontal Pod Autoscaler (HPA).
+
+ Service Account
+Provides an identity for processes running in a pod to communicate with the Kubernetes API.
+
+ Cleaning Up EC2 Instance
+Terminate unused instances, delete old volumes and snapshots.
+28. Cleaning Up Kubernetes Cluster
+Remove unused resources: pods, services, volumes, images.
+29. Namespace
+Namespace: Provides a scope for resources in a cluster.
+30. Restricting Namespace Access
+Use RBAC to grant access to specific users.
+yaml
+Copy code
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: my-namespace
+  name: my-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: my-role-binding
+  namespace: my-namespace
+subjects:
+  - kind: User
+    name: user1
+  - kind: User
+    name: user2
+  - kind: User
+    name: user3
+  - kind: User
+    name: user4
+roleRef:
+  kind: Role
+  name: my-role
+  apiGroup: rbac.authorization.k8s.io
+
+what is static pod and who maintains
+9. difference b/w secreat and configmap - can we pass secret in configmap 
+10. different types of probes
+11. what is you understanding on various devops matrix
+12. have you worked on platform as service
+
+
+ Static Pod
+Static Pod: Managed directly by the kubelet daemon on a specific node, without being created by the API server. They are defined by static pod manifests placed in the kubelet's manifest directory.
+9. Secret vs ConfigMap
+Secret: Used to store sensitive data such as passwords, OAuth tokens, and SSH keys.
+ConfigMap: Used to store non-confidential data in key-value pairs.
+Passing Secret in ConfigMap:
+
+Directly, you can't pass secrets in a ConfigMap because ConfigMaps are not intended for sensitive data. Instead, use secrets directly.
+10. Different Types of Probes
+Liveness Probe: Determines if a container is running. If the liveness probe fails, the container is killed and restarted.
+Readiness Probe: Determines if a container is ready to start accepting traffic.
+Startup Probe: Used to check if the application within the container has started.
+11. Understanding Various DevOps Metrics
+Deployment Frequency: How often deployments occur.
+Change Lead Time: Time taken from code commit to deployment.
+Mean Time to Recovery (MTTR): Time taken to recover from a failure.
+Change Failure Rate: Percentage of changes that result in failures.
+12. Platform as a Service (PaaS)
+Provides a platform allowing customers to develop, run, and manage applications without dealing with the infrastructure. Examples include AWS Elastic Beanstalk, Google App Engine, and Heroku.
+Would you like more details on any specific point?
