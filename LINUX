@@ -1,0 +1,83 @@
+LINUX
+
+LINUX
+
+Linux Questions
+
+1. How do you check whether a remote server port is open?
+
+Use the telnet or nc (netcat) command.
+sh
+Copy code
+telnet <hostname> <port>
+nc -zv <hostname> <port>
+
+2. I want to change the IP address of the Linux server. How to do that?
+
+Edit the network configuration file, e.g., /etc/network/interfaces for Debian/Ubuntu or /etc/sysconfig/network-scripts/ifcfg-<interface> for RHEL/CentOS, and then restart the network service.
+
+
+3. I want to change the domain name or add a domain name in the server. In which file do you add?
+
+Edit the /etc/hosts file or update DNS settings in the /etc/resolv.conf file.
+
+2. Replace the word "sudha" with "devops" in sudha.txt file. Find the occurrence of the "sudha" word in the file.
+
+Answer:
+
+bash
+Copy code
+# Replace the word "sudha" with "devops"
+sed -i 's/sudha/devops/g' sudha.txt
+
+# Find the occurrence of the word "sudha"
+grep -o 'sudha' sudha.txt | wc -l
+
+3. There is a directory with n number of files. Delete files older than 27 days.
+
+Answer:
+
+bash
+Copy code
+find /path/to/directory -type f -mtime +27 -exec rm {} \;
+
+21. How will you check if the previous command is successful or not in Linux?
+
+Answer:
+
+Check Exit Status: Use the $? variable immediately after the command.
+bash
+Copy code
+command
+if [ $? -eq 0 ]; then
+    echo "Command succeeded"
+else
+    echo "Command failed"
+fi
+
+
+Where to find Linux debug logs?
+
+System Logs: /var/log/syslog, /var/log/messages
+Kernel Logs: /var/log/kern.log
+Application Logs: Location varies by application, typically within /var/log/.
+Are you aware of what SID and GID are? Could you explain?
+
+SID (Security Identifier): A unique identifier used by Windows operating systems to manage user, group, and computer accounts.
+GID (Group Identifier): A unique identifier for groups in Unix/Linux systems used for managing group permissions.
+
+
+What are the commands you are aware of to check the Linux machine performance?
+
+top: Displays real-time system summary and process information.
+htop: An interactive process viewer.
+vmstat: Reports virtual memory statistics.
+iostat: Reports CPU and I/O statistics.
+free: Displays memory usage.
+
+What do you understand when a file has permission 0774?
+
+0: No special permissions.
+7: Read, write, and execute permissions.
+4: Read permissions only.
+0774: Owner can read, write, and execute; group can read, write, and execute; others can read only.
